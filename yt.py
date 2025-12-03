@@ -28,6 +28,7 @@ BASE_DIR = os.path.join(os.path.expanduser("~"),STORAGE_NAME,YT_DIR_NAME)
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 youtube = dis.build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
+#youtube = dis.build("youtube", "v3" )
 
 def joinPath(basePath, dir):
     return os.path.join(basePath, dir)
