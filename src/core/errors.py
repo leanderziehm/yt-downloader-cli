@@ -1,5 +1,5 @@
 import os
-from utils import colorize, RED
+from src.core.utils import colorize, RED
 
 links_error_file_path = os.path.join(os.path.expanduser("~"), "syncthing", "yt", "linksError.txt")
 

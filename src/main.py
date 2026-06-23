@@ -2,30 +2,33 @@ import os
 import sys
 import time
 
-from config import (
+from src.config import (
     BASE_DIR,
     TARGET_RESOLUTION,
     MAX_RESOLUTION,
+    LINKS_FILE,
+    DOWNLOAD_FOLDER,
+    DOWNLOAD_FROM_LINKS
+
 )
-from utils import (
+from src.core.utils import (
     colorize,
     DARK_GRAY,
-    LIGHT_GRAY,
     open_file,
     open_file_explorer,
     remove_illegal_path_characters,
     joinPath,
 )
-from download_manager import (
+from src.download_manager import (
     download_links,
     download_playlist,
     download_from_youtube,
 )
 
 downloads_base_path = BASE_DIR
-mp3_mp4_path = joinPath(downloads_base_path, "Downloads")
-links_download_path = joinPath(downloads_base_path, "DownloadFromLinks")
-links_file_path = joinPath(BASE_DIR, "links.txt")
+mp3_mp4_path = joinPath(downloads_base_path, DOWNLOAD_FOLDER)
+links_download_path = joinPath(downloads_base_path, DOWNLOAD_FROM_LINKS)
+links_file_path = joinPath(BASE_DIR, LINKS_FILE)
 
 def print_help():
     print("Send [1 or a] to download [audio]")
@@ -43,11 +46,11 @@ def main():
     global TARGET_RESOLUTION
     global MAX_RESOLUTION
 
-    download_video = True
+    download_filetype_video = True
     save_audio_as_mp3 = True
 
     while True:
-        mode_text = f"[VIDEO {TARGET_RESOLUTION}]" if download_video else "[AUDIO]"
+        mode_text = f"[VIDEO {TARGET_RESOLUTION}]" if download_filetype_video else "[AUDIO]"
         mode_text = colorize(mode_text, DARK_GRAY)
 
         url = input(f"{mode_text} Paste your link here:\n")
@@ -56,18 +59,18 @@ def main():
             start_time = time.time()
 
             if "playlist" in url:
-                download_playlist(url, download_video, MAX_RESOLUTION, TARGET_RESOLUTION, save_audio_as_mp3)
+                download_playlist(url, download_filetype_video, MAX_RESOLUTION, TARGET_RESOLUTION, save_audio_as_mp3)
             elif "yout" in url:
-                download_from_youtube(url, mp3_mp4_path, True, 0, download_video, MAX_RESOLUTION, TARGET_RESOLUTION, save_audio_as_mp3)
+                download_from_youtube(url, mp3_mp4_path, True, 0, download_filetype_video, MAX_RESOLUTION, TARGET_RESOLUTION, save_audio_as_mp3)
 
             end_time = time.time()
             print(f"[Downloading took {end_time - start_time} seconds]")
             print("")
         else:
             if url in ['1', 'a']:
-                download_video = False
+                download_filetype_video = False
             elif url in ['2', 'v']:
-                download_video = True
+                download_filetype_video = True
             elif url == "m":
                 MAX_RESOLUTION = True
                 TARGET_RESOLUTION = "MAX"
@@ -82,7 +85,7 @@ def main():
                     sanitized_dir_name = remove_illegal_path_characters(dir_name)
                     target_path = joinPath(links_download_path, sanitized_dir_name)
                     os.makedirs(target_path, exist_ok=True)
-                download_links(target_path, download_video, MAX_RESOLUTION, TARGET_RESOLUTION, save_audio_as_mp3)
+                download_links(target_path, download_filetype_video, MAX_RESOLUTION, TARGET_RESOLUTION, save_audio_as_mp3)
             elif url in ["i", "here", "h"]:
                 mp3_mp4_path = os.getcwd()
                 print(colorize("[DOWNLOAD PATH CHANGED to CWD]", DARK_GRAY), mp3_mp4_path)

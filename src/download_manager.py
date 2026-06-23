@@ -1,19 +1,21 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
-
-from youtube_client import YouTubeDownloader, get_playlist_id, get_all_links_from_playlist, get_playlist_name
-from utils import remove_illegal_path_characters, joinPath, colorize, YELLOW, RED
-from config import (
+from src.clients.pytube_client import YouTubeDownloader
+from src.clients.youtube_client import get_playlist_id, get_all_links_from_playlist, get_playlist_name
+from src.core.utils import remove_illegal_path_characters, joinPath, colorize, YELLOW, RED
+from src.config import (
     SYNC_DOWNLOADS,
     MAX_WORKERS,
     SHOW_PER_VIDEO_PROGRESS,
     SHOW_PER_VIDEO_PROGRESS_IN_THREADS,
-    BASE_DIR
+    BASE_DIR,
+    LINKS_FILE,
+    DOWNLOAD_FROM_LINKS
 )
 
-links_file_path = os.path.join(BASE_DIR, "links.txt")
-links_download_path = os.path.join(BASE_DIR, "DownloadFromLinks")
+links_file_path = os.path.join(BASE_DIR, LINKS_FILE)
+links_download_path = os.path.join(BASE_DIR,DOWNLOAD_FROM_LINKS )
 
 def download_from_youtube(url, target_path, show_progress, position, download_video, max_resolution, target_resolution, save_audio_as_mp3):
     downloader = YouTubeDownloader(
@@ -83,6 +85,6 @@ def download_playlist(url, download_video, max_resolution, target_resolution, sa
     
     os.makedirs(download_path, exist_ok=True)
 
-    print(f"[Downloading {len(urls)} files from playlist: {playlist_name}]")
+    print(f"[Downloading {len(urls)} files from playlist: {playlist_name}]") # todo fix this urls could be none
     for u in urls:
         download_from_youtube(u, download_path, False, 0, download_video, max_resolution, target_resolution, save_audio_as_mp3)

@@ -1,42 +1,9 @@
 import os
 from pytubefix import YouTube as yt
-import googleapiclient.discovery as dis
-from urllib.parse import parse_qs, urlparse
 from tqdm import tqdm
+from src.core.utils import remove_illegal_path_characters, colorize, DARK_GRAY
+from src.core.errors import log_missing_stream, log_error
 
-from utils import remove_illegal_path_characters, colorize, DARK_GRAY
-from errors import log_missing_stream, log_error
-from config import YOUTUBE_API_KEY
-
-youtube = dis.build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
-
-def get_playlist_id(url):
-    query = parse_qs(urlparse(url).query, keep_blank_values=True)
-    playlist_id = query["list"][0]
-    return playlist_id
-
-def get_playlist_name(playlist_id):
-    playlist_response = youtube.playlists().list(part="snippet", id=playlist_id).execute()
-    playlist_name = playlist_response["items"][0]["snippet"]["title"]
-    return playlist_name
-
-def get_all_links_from_playlist(playlist_id):
-    request = youtube.playlistItems().list(part="snippet", playlistId=playlist_id, maxResults=100)
-    response = request.execute()
-    playlistItems = []
-
-    while request is not None:
-        response = request.execute()
-        playlistItems += response["items"]
-        request = youtube.playlistItems().list_next(request, response)
-
-    links = []
-    for item in playlistItems:
-        video_id = item["snippet"]["resourceId"]["videoId"]
-        link = f"https://www.youtube.com/watch?v={video_id}"
-        links.append(link)
-
-    return links
 
 class YouTubeDownloader:
     def __init__(self, url, target_path, show_progress=False, position=0, download_video=True, max_resolution=False, target_resolution="360p", save_audio_as_mp3=True):
