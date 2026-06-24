@@ -1,6 +1,6 @@
 import os
 
-STORAGE_NAME = "Downloads"
+STORAGE_NAME = "Videos"
 YT_DIR_NAME = "yt-cli"
 LINKS_FILE = "links.txt"
 DOWNLOAD_FOLDER="Downloads"

@@ -20,7 +20,7 @@ class YouTubeDownloader:
         try:
             os.makedirs(self.target_path, exist_ok=True)
 
-            ytUrl = yt(self.url, use_oauth=True, allow_oauth_cache=True)
+            ytUrl = yt(self.url)#, use_oauth=True, allow_oauth_cache=True)
             streams = ytUrl.streams
             extension = ".mp4"
 
